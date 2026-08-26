@@ -15,12 +15,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.ifsp.scl.prdm.sc3047822.activitylifecyclecompose.ui.theme.ActivityLifeCycleComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,26 +40,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    var name by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val age = rememberSaveable {
-        mutableStateOf("")
-    }
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel = viewModel()
+) {
+    val name = mainViewModel.name
+    val age = mainViewModel.age.toString()
 
     Column(modifier = modifier.fillMaxSize()) {
         TextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = { mainViewModel.updateName(it) },
             label = { Text("Name") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = age.value,
-            onValueChange = { age.value = it },
+            value = age,
+            onValueChange = { mainViewModel.updateAge(it.toIntOrNull()) },
             label = { Text("Age") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
